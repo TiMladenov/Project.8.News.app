@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Project_7_Book_Listing_App</string>
+    <string name="search_bar_hint">Enter title of a book you are searching</string>
+    <string name="author">Author:</string>
+    <string name="title">Title:</string>
+    <string name="Published">Published:</string>
+    <string name="pageCount">Pages:</string>
+    <string name="language">Language:</string>
+    <string name="placeholder">Placeholder</string>
+
+    <string name="error_malformed_url">Error while creating URL\t</string>
+</resources>
