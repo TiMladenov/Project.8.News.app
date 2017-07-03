@@ -13,7 +13,7 @@ public class Books {
     private String language;
     private String previewLink;
 
-    public Books (String bookTitle, String author, String publishedDate, int pageCount, String thumbnail, String language, String previewLink) {
+    public Books(String bookTitle, String author, String publishedDate, int pageCount, String thumbnail, String language, String previewLink) {
         this.bookTitle = bookTitle;
         this.author = author;
         this.publishedDate = publishedDate;

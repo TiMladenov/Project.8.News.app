@@ -13,6 +13,10 @@ public class BooksLoader extends AsyncTaskLoader<List<Books>> {
 
     private String url;
 
+    /*
+    * Loads the URL and initiates the fetch of JSON data
+    * */
+
     public BooksLoader(Context context, String URL) {
         super(context);
         this.url = URL;
@@ -25,11 +29,11 @@ public class BooksLoader extends AsyncTaskLoader<List<Books>> {
 
     @Override
     public List<Books> loadInBackground() {
-        if(url == null) {
+        if (url == null) {
             return null;
         }
 
-        List<Books> quakes = BooksUtils.fetchEarthquakeData(url);
-        return quakes;
+        List<Books> books = BooksUtils.fetchBookData(url);
+        return books;
     }
 }

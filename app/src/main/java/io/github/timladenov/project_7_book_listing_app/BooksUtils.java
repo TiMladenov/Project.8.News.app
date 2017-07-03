@@ -23,19 +23,23 @@ import java.util.List;
  * Created by tmladenov on 02.07.17.
  */
 
+/*
+* Receives a string, converts it to URL, then makes an HTTP call to get the raw JSON data, then extracts the data from the JSON and returns it as a List
+* */
+
 public class BooksUtils extends AppCompatActivity {
     private static final String LOG_TAG = BooksUtils.class.getSimpleName();
 
-    private BooksUtils() {}
+    private BooksUtils() {
+    }
 
-    public static List<Books> fetchEarthquakeData(String requestUrl) {
+    public static List<Books> fetchBookData(String requestUrl) {
         URL url = createUrl(requestUrl);
 
         String jsonResponse = null;
         try {
             jsonResponse = makeHTTPcall(url);
         } catch (IOException e) {
-            //TODO Add context to constructor, access string from resource
             Log.e(LOG_TAG, "Problem making HTTP request\\n");
             e.printStackTrace();
         }
@@ -50,7 +54,6 @@ public class BooksUtils extends AppCompatActivity {
         try {
             formUrl = new URL(url);
         } catch (MalformedURLException e) {
-            //TODO Add context to constructor, access string from resource
             Log.e(LOG_TAG, "Error while creating URL\\n");
             e.printStackTrace();
         }
@@ -60,7 +63,7 @@ public class BooksUtils extends AppCompatActivity {
     private static String makeHTTPcall(URL url) throws IOException {
         String jsonResponse = "";
 
-        if(url == null) {
+        if (url == null) {
             return jsonResponse;
         }
 
@@ -74,22 +77,20 @@ public class BooksUtils extends AppCompatActivity {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-            if(urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
-                //TODO Add context to constructor, access string from resource
                 Log.e(LOG_TAG, "Error response code:\\t" + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            //TODO Add context to constructor, access string from resource
             Log.e(LOG_TAG, "Can't retrieve the books JSON", e);
         } finally {
-            if(urlConnection != null) {
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
 
-            if(inputStream != null) {
+            if (inputStream != null) {
                 inputStream.close();
             }
             return jsonResponse;
@@ -118,9 +119,6 @@ public class BooksUtils extends AppCompatActivity {
         try {
             JSONObject baseBookJsonResp = new JSONObject(booksJson);
 
-            //TODO pass books count value to Int variable in MainActivity
-            int totalBooksFound = baseBookJsonResp.optInt("totalItems");
-
             JSONArray arrayItems = baseBookJsonResp.getJSONArray("items");
 
             for (int i = 0; i < arrayItems.length(); i++) {
@@ -128,35 +126,34 @@ public class BooksUtils extends AppCompatActivity {
                 JSONObject jsonArrObject = arrayItems.getJSONObject(i);
 
                 JSONObject titleRoot = jsonArrObject.getJSONObject("volumeInfo");
-                String title = titleRoot.optString("title");
-                String authors = titleRoot.optString("authors");
+                String title = titleRoot.getString("title");
 
-                //TODO if authors are more than 0 go to array and add all authors to a String
-//                JSONArray authors_array = titleRoot.getJSONArray("authors");
-//
-//                StringBuilder author_list = new StringBuilder();
-//                for(int j = 0; j < authors_array.length(); j++) {
-//                    String author = authors_array.optString(i);
-//                    author_list.append(author);
-//                }
-//
-//                String authors = author_list.toString();
+                JSONArray authors_array = titleRoot.optJSONArray("authors");
+
+                String authors = new String();
+                if (authors_array != null) {
+                    for (int j = 0; j < authors_array.length(); j++) {
+                        authors += authors_array.getString(j);
+                        if (j < authors_array.length() - 1) {
+                            authors += ", ";
+                        }
+                    }
+                }
 
                 String publishedDate = titleRoot.optString("publishedDate");
                 int pageCount = titleRoot.optInt("pageCount");
 
                 JSONObject imageRes = titleRoot.getJSONObject("imageLinks");
-                String thumbnail = imageRes.optString("thumbnail");
+                String thumbnail = imageRes.getString("thumbnail");
 
-                String language = titleRoot.optString("language");
-                String previewLink = titleRoot.optString("previewLink");
+                String language = titleRoot.getString("language");
+                String previewLink = titleRoot.getString("previewLink");
 
                 Books books = new Books(title, authors, publishedDate, pageCount, thumbnail, language, previewLink);
                 booksList.add(books);
             }
 
         } catch (JSONException e) {
-            //TODO Add context to constructor, access string from resource
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }
         return booksList;
