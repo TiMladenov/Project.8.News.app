@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private final String URL_SEARCH = "https://www.googleapis.com/books/v1/volumes?startIndex=0&language=en&maxResults=30&q=";
 
-    //TODO Check for memory leaks
     private String mUserQuery;
     private String GOOGLE_BOOKS_API_URL = URL_SEARCH;
 
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         userEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                networkInfo = connectivityManager.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     progressBar.setVisibility(View.VISIBLE);
                     mEmptyState.setVisibility(View.GONE);
@@ -73,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     getLoaderManager().restartLoader(1, null, MainActivity.this);
                     mUserQuery = "";
                     GOOGLE_BOOKS_API_URL = URL_SEARCH;
+                } else {
+                    showWelcome = false;
+                    mAdapter.clear();
                 }
             }
         });
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         } else {
             progressBar.setVisibility(View.GONE);
             mEmptyState.setText(getResources().getString(R.string.no_internet));
+            mAdapter.clear();
         }
     }
 
@@ -134,10 +138,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<Books>> loader, List<Books> data) {
+        networkInfo = connectivityManager.getActiveNetworkInfo();
         if (showWelcome) {
             mEmptyState.setText(getResources().getString(R.string.welcome_txt));
             showWelcome = false;
-        } else {
+        }
+        else if(networkInfo == null) {
+            mEmptyState.setText(getResources().getString(R.string.no_internet));
+        }
+        else {
             mEmptyState.setText(getResources().getString(R.string.no_result));
         }
         mAdapter.clear();

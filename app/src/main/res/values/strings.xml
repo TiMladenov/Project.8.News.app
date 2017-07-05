@@ -10,7 +10,7 @@
 
     <string name="error_malformed_url">Error while creating URL\t</string>
     <string name="error_no_url">No preview available for this book</string>
-    <string name="no_result">No search results found or there are connection issues</string>
+    <string name="no_result">No search results found. Check search criteria and network access.</string>
     <string name="no_internet">No connection. Connect to internet and launch the app again.</string>
     <string name="welcome_txt">Welcome to Book Search. Enter your query above.</string>
     <string name="unknown">Unknown</string>

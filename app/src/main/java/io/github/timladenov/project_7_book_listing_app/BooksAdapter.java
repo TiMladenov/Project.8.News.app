@@ -51,7 +51,9 @@ public class BooksAdapter extends ArrayAdapter<Books> {
         Books currentBook = getItem(position);
 
         image = (ImageView) convertView.findViewById(R.id.bookImage);
-        Picasso.with(getContext()).load(currentBook.getThumbnail()).into(image);
+        if(currentBook.getThumbnail() != null) {
+            Picasso.with(getContext()).load(currentBook.getThumbnail()).into(image);
+        }
 
         bookTitle = (TextView) convertView.findViewById(R.id.bookTitle_text);
         if (currentBook.getBookTitle() != null && !currentBook.getBookTitle().equals("")) {

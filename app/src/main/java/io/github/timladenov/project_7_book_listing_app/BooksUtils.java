@@ -93,8 +93,8 @@ public class BooksUtils extends AppCompatActivity {
             if (inputStream != null) {
                 inputStream.close();
             }
-            return jsonResponse;
         }
+        return jsonResponse;
     }
 
     private static String readFromStream(InputStream inputStream) throws IOException {
@@ -119,43 +119,49 @@ public class BooksUtils extends AppCompatActivity {
         try {
             JSONObject baseBookJsonResp = new JSONObject(booksJson);
 
-            JSONArray arrayItems = baseBookJsonResp.getJSONArray("items");
+            if (baseBookJsonResp.has("items")) {
+                JSONArray arrayItems = baseBookJsonResp.getJSONArray("items");
 
-            for (int i = 0; i < arrayItems.length(); i++) {
+                for (int i = 0; i < arrayItems.length(); i++) {
 
-                JSONObject jsonArrObject = arrayItems.getJSONObject(i);
+                    JSONObject jsonArrObject = arrayItems.getJSONObject(i);
 
-                JSONObject titleRoot = jsonArrObject.getJSONObject("volumeInfo");
-                String title = titleRoot.getString("title");
+                    JSONObject titleRoot = jsonArrObject.getJSONObject("volumeInfo");
+                    String title = titleRoot.getString("title");
 
-                JSONArray authors_array = titleRoot.optJSONArray("authors");
+                    JSONArray authors_array = titleRoot.optJSONArray("authors");
 
-                String authors = new String();
-                if (authors_array != null) {
-                    for (int j = 0; j < authors_array.length(); j++) {
-                        authors += authors_array.getString(j);
-                        if (j < authors_array.length() - 1) {
-                            authors += ", ";
+                    String authors = new String();
+                    if (authors_array != null) {
+                        for (int j = 0; j < authors_array.length(); j++) {
+                            authors += authors_array.getString(j);
+                            if (j < authors_array.length() - 1) {
+                                authors += ", ";
+                            }
                         }
                     }
+
+                    String publishedDate = titleRoot.optString("publishedDate");
+                    int pageCount = titleRoot.optInt("pageCount");
+
+                    String thumbnail = null;
+                    if(titleRoot.has("imageLinks")) {
+                        JSONObject imageRes = titleRoot.getJSONObject("imageLinks");
+                        thumbnail = imageRes.getString("thumbnail");
+                    }
+
+                    String language = titleRoot.getString("language");
+                    String previewLink = titleRoot.getString("previewLink");
+
+                    Books books = new Books(title, authors, publishedDate, pageCount, thumbnail, language, previewLink);
+                    booksList.add(books);
                 }
 
-                String publishedDate = titleRoot.optString("publishedDate");
-                int pageCount = titleRoot.optInt("pageCount");
-
-                JSONObject imageRes = titleRoot.getJSONObject("imageLinks");
-                String thumbnail = imageRes.getString("thumbnail");
-
-                String language = titleRoot.getString("language");
-                String previewLink = titleRoot.getString("previewLink");
-
-                Books books = new Books(title, authors, publishedDate, pageCount, thumbnail, language, previewLink);
-                booksList.add(books);
             }
-
+            return booksList;
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }
-        return booksList;
+        return null;
     }
 }
