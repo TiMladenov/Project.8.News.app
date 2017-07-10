@@ -20,15 +20,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Books>> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
 
-    private final String URL_SEARCH = "https://www.googleapis.com/books/v1/volumes?startIndex=0&language=en&maxResults=30&q=";
+    private final String URL_SEARCH = "https://content.guardianapis.com/search?api-key=acb710a9-cece-466f-b264-6805aa52b74a&q=";
 
     private String mUserQuery;
-    private String GOOGLE_BOOKS_API_URL = URL_SEARCH;
+    private String Guardian_API_URL = URL_SEARCH;
 
     private ListView listView;
-    private BooksAdapter mAdapter;
+    private ArticleAdapter mAdapter;
     private ConnectivityManager connectivityManager;
     private NetworkInfo networkInfo;
     private ProgressBar progressBar;
@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     progressBar.setVisibility(View.VISIBLE);
                     mEmptyState.setVisibility(View.GONE);
                     mUserQuery = MainActivity.clearQuery(userEntry.getText().toString());
-                    GOOGLE_BOOKS_API_URL += mUserQuery;
+                    Guardian_API_URL += mUserQuery;
                     getLoaderManager().restartLoader(1, null, MainActivity.this);
                     mUserQuery = "";
-                    GOOGLE_BOOKS_API_URL = URL_SEARCH;
+                    Guardian_API_URL = URL_SEARCH;
                 } else {
                     showWelcome = false;
                     mAdapter.clear();
@@ -86,19 +86,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         * */
 
         listView = (ListView) findViewById(R.id.list);
-        mAdapter = new BooksAdapter(this, new ArrayList<Books>());
+        mAdapter = new ArticleAdapter(this, new ArrayList<Article>());
         listView.setAdapter(mAdapter);
 
         /*
-        * Gets the URL to the book in Google Books if the user selects a particular book
+        * Gets the URL to the article in The Guardian if the user selects a particular article in the app
         * */
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Books selectedBook = mAdapter.getItem(position);
-                if (selectedBook.getPreviewLink() != null) {
-                    Intent visit = new Intent(Intent.ACTION_VIEW, Uri.parse(selectedBook.getPreviewLink()));
+                Article selectedBook = mAdapter.getItem(position);
+                if (selectedBook.getUrl() != null) {
+                    Intent visit = new Intent(Intent.ACTION_VIEW, Uri.parse(selectedBook.getUrl()));
                     startActivity(visit);
                 } else {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_no_url), Toast.LENGTH_SHORT).show();
@@ -132,12 +132,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public Loader<List<Books>> onCreateLoader(int id, Bundle args) {
-        return new BooksLoader(this, GOOGLE_BOOKS_API_URL);
+    public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
+        return new ArticleLoader(this, Guardian_API_URL);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Books>> loader, List<Books> data) {
+    public void onLoadFinished(Loader<List<Article>> loader, List<Article> data) {
         networkInfo = connectivityManager.getActiveNetworkInfo();
         if (showWelcome) {
             mEmptyState.setText(getResources().getString(R.string.welcome_txt));
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     * */
 
     @Override
-    public void onLoaderReset(Loader<List<Books>> loader) {
+    public void onLoaderReset(Loader<List<Article>> loader) {
         mAdapter.clear();
     }
 

@@ -1,17 +1,16 @@
 <resources>
-    <string name="app_name">Book Search</string>
-    <string name="search_bar_hint">Enter title of a book you are searching</string>
-    <string name="author">Author:</string>
+    <string name="app_name">News app</string>
+    <string name="search_bar_hint">Enter the topic you would like to search</string>
     <string name="title">Title:</string>
+    <string name="section">Section:</string>
     <string name="Published">Published:</string>
-    <string name="pageCount">Pages:</string>
-    <string name="language">Language:</string>
     <string name="placeholder">Placeholder</string>
 
     <string name="error_malformed_url">Error while creating URL\t</string>
-    <string name="error_no_url">No preview available for this book</string>
+    <string name="error_no_url">No preview available for this article</string>
     <string name="no_result">No search results found. Check search criteria and network access.</string>
     <string name="no_internet">No connection. Connect to internet and launch the app again.</string>
-    <string name="welcome_txt">Welcome to Book Search. Enter your query above.</string>
+    <string name="welcome_txt">Welcome to The Guardian. Search the topic you are interested in.</string>
     <string name="unknown">Unknown</string>
+    <string name="read_article">Click here to read the article</string>
 </resources>

@@ -19,21 +19,17 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tmladenov on 02.07.17.
- */
-
 /*
 * Receives a string, converts it to URL, then makes an HTTP call to get the raw JSON data, then extracts the data from the JSON and returns it as a List
 * */
 
-public class BooksUtils extends AppCompatActivity {
-    private static final String LOG_TAG = BooksUtils.class.getSimpleName();
+public class ArticleUtils extends AppCompatActivity {
+    private static final String LOG_TAG = ArticleUtils.class.getSimpleName();
 
-    private BooksUtils() {
+    private ArticleUtils() {
     }
 
-    public static List<Books> fetchBookData(String requestUrl) {
+    public static List<Article> fetchArticleData(String requestUrl) {
         URL url = createUrl(requestUrl);
 
         String jsonResponse = null;
@@ -44,9 +40,9 @@ public class BooksUtils extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        List<Books> bookInfo = extractDataFromJSON(jsonResponse);
+        List<Article> articlesInfo = extractDataFromJSON(jsonResponse);
 
-        return bookInfo;
+        return articlesInfo;
     }
 
     private static URL createUrl(String url) {
@@ -111,54 +107,37 @@ public class BooksUtils extends AppCompatActivity {
         return output.toString();
     }
 
-    private static List<Books> extractDataFromJSON(String booksJson) {
+    private static List<Article> extractDataFromJSON(String booksJson) {
         if (TextUtils.isEmpty(booksJson)) {
             return null;
         }
-        List<Books> booksList = new ArrayList<>();
+        List<Article> articleList = new ArrayList<>();
         try {
-            JSONObject baseBookJsonResp = new JSONObject(booksJson);
+            JSONObject baseJsonResp = new JSONObject(booksJson);
 
-            if (baseBookJsonResp.has("items")) {
-                JSONArray arrayItems = baseBookJsonResp.getJSONArray("items");
+            if (baseJsonResp.has("response")) {
+                JSONObject responseObj = baseJsonResp.getJSONObject("response");
+                JSONArray arrayOfObjects = responseObj.getJSONArray("results");
 
-                for (int i = 0; i < arrayItems.length(); i++) {
+                for (int i = 0; i < arrayOfObjects.length(); i++) {
 
-                    JSONObject jsonArrObject = arrayItems.getJSONObject(i);
+                    JSONObject jsonArrObject = arrayOfObjects.getJSONObject(i);
 
-                    JSONObject titleRoot = jsonArrObject.getJSONObject("volumeInfo");
-                    String title = titleRoot.getString("title");
+                    String sectionName = jsonArrObject.optString("sectionName");
 
-                    JSONArray authors_array = titleRoot.optJSONArray("authors");
+                    //Formats the time to a readable format. Guardian API uses ZULU / UTC time.
+                    String publication = jsonArrObject.optString("webPublicationDate");
+                    publication = publication.split("T")[0] + ", " + publication.split("T")[1].split("Z")[0] + " UTC";
 
-                    String authors = new String();
-                    if (authors_array != null) {
-                        for (int j = 0; j < authors_array.length(); j++) {
-                            authors += authors_array.getString(j);
-                            if (j < authors_array.length() - 1) {
-                                authors += ", ";
-                            }
-                        }
-                    }
+                    String title = jsonArrObject.optString("webTitle");
+                    String url = jsonArrObject.optString("webUrl");
 
-                    String publishedDate = titleRoot.optString("publishedDate");
-                    int pageCount = titleRoot.optInt("pageCount");
-
-                    String thumbnail = null;
-                    if(titleRoot.has("imageLinks")) {
-                        JSONObject imageRes = titleRoot.getJSONObject("imageLinks");
-                        thumbnail = imageRes.getString("thumbnail");
-                    }
-
-                    String language = titleRoot.getString("language");
-                    String previewLink = titleRoot.getString("previewLink");
-
-                    Books books = new Books(title, authors, publishedDate, pageCount, thumbnail, language, previewLink);
-                    booksList.add(books);
+                    Article article = new Article(sectionName, publication, title, url);
+                    articleList.add(article);
                 }
 
             }
-            return booksList;
+            return articleList;
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }

@@ -5,11 +5,7 @@ import android.content.Context;
 
 import java.util.List;
 
-/**
- * Created by tmladenov on 02.07.17.
- */
-
-public class BooksLoader extends AsyncTaskLoader<List<Books>> {
+public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
 
     private String url;
 
@@ -17,7 +13,7 @@ public class BooksLoader extends AsyncTaskLoader<List<Books>> {
     * Loads the URL and initiates the fetch of JSON data
     * */
 
-    public BooksLoader(Context context, String URL) {
+    public ArticleLoader(Context context, String URL) {
         super(context);
         this.url = URL;
     }
@@ -28,12 +24,12 @@ public class BooksLoader extends AsyncTaskLoader<List<Books>> {
     }
 
     @Override
-    public List<Books> loadInBackground() {
+    public List<Article> loadInBackground() {
         if (url == null) {
             return null;
         }
 
-        List<Books> books = BooksUtils.fetchBookData(url);
+        List<Article> books = ArticleUtils.fetchArticleData(url);
         return books;
     }
 }

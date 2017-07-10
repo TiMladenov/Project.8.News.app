@@ -14,8 +14,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_bar_height"
-        android:alpha="0.6"
-        android:background="@android:color/white" />
+        android:background="@color/colorPrimaryDark" />
 
     <EditText
         android:id="@+id/search_field"
@@ -46,7 +45,7 @@
         android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:scrollbars="vertical"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="@dimen/search_field_text_size" />
 
     <ProgressBar
