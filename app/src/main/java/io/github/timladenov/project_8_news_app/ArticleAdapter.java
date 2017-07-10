@@ -1,4 +1,4 @@
-package io.github.timladenov.project_7_book_listing_app;
+package io.github.timladenov.project_8_news_app;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

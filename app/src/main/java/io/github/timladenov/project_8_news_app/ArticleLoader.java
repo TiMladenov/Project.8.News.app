@@ -1,4 +1,4 @@
-package io.github.timladenov.project_7_book_listing_app;
+package io.github.timladenov.project_8_news_app;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
